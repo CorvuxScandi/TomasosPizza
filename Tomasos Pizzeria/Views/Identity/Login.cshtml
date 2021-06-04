@@ -1,0 +1,22 @@
+﻿
+@model Tomasos_Pizzeria.Identity.IdentityModels.LoginModel
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <p>Logga in</p>
+        </div>
+
+        <div class="card-body p-4">
+                <form asp-action="Login">
+                    <section class="form-group">
+                        <label asp-for="UserName" class="col-form-label text-dark"></label>
+                        <input asp-for="UserName" class="form-control" />
+                    </section>
+                    <section class="form-group">
+                        <label asp-for="Password" class="col-form-label text-dark"></label>
+                        <input asp-for="Password" class="form-control" />
+                    </section>
+                </form>
+        </div>
+    </div>
+</div>

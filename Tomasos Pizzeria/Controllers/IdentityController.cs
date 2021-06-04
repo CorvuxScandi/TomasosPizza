@@ -1,25 +1,32 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Tomasos_Pizzeria.Identity.Identitycontext;
+using Tomasos_Pizzeria.Contexts;
+using Tomasos_Pizzeria.Identity.IdentityModels;
+using Tomasos_Pizzeria.Models;
 
 namespace Tomasos_Pizzeria.Controllers
 {
     public class IdentityController : Controller
     {
-        private AuthDbContext _context;
+        private TomasosContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private SignInManager<ApplicationUser> _signInManager;
 
-        public IdentityController(AuthDbContext context)
+        public IdentityController(UserManager<ApplicationUser> userManager, TomasosContext context, SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
 
         // Go to Loginin view
-        public ActionResult Login()
+        [HttpGet]
+        public ActionResult Register()
         {
             return View();
         }
@@ -27,66 +34,70 @@ namespace Tomasos_Pizzeria.Controllers
         // Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Authorize()
+        public async  Task<ActionResult> Register(RegisterUserModel userModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Kund newKund = new()
+                {
+                    AnvandarNamn = userModel.UserName,
+                    Email = userModel.Email,
+                    Gatuadress = userModel.Adress,
+                    Losenord = userModel.Password,
+                    Namn = userModel.FirstName + " " + userModel.LastName,
+                    Postnr = userModel.ZipCode,
+                    Postort = userModel.City,
+                    Telefon = userModel.Phone
+                };
+                ApplicationUser newUser = new()
+                {
+                    Email = userModel.Email,
+                    UserName = userModel.UserName,
+                };
+
+                _context.Add(newKund);
+
+                var result = await _userManager.CreateAsync(newUser, userModel.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(newUser, ApplicationRoles.Customer);
+                    return RedirectToAction("Index", "Home");
+                }
+
+            }
+            return View(userModel);
+        }
+
+        [HttpGet]
+        public IActionResult Login()
         {
             return View();
         }
 
-        // POST: Identity/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Login(LoginModel login)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var user = await _userManager.FindByNameAsync(login.UserName);
+                if(user != null)
+                {
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, login.Password, false);
+                    if(result.Succeeded) return RedirectToAction("Shop", "Home");
+                }
             }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Identity/Edit/5
-        public ActionResult Edit(int id)
-        {
+            ModelState.AddModelError("", "Ogiltligt användarnamn eller lösenord");
             return View();
         }
 
-        // POST: Identity/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Logout()
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            await _signInManager.SignOutAsync();
 
-        // GET: Identity/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Identity/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }
