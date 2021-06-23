@@ -1,0 +1,62 @@
+﻿
+@model MenuItemModel
+
+
+    <div class="container">
+        <div class="border border-dark">
+            @if (Model.ShowAdminControlls)
+            {
+                <div>
+                    <a class="btn btn-dark" asp-controller="Admin" asp-action="NewMatratt">Lägg till ny maträtt</a>
+                </div>
+            }
+            <ol>
+                @foreach (var item in Model.Matratts)
+                {
+                    <li>
+                        <div class="card">
+                            <div class="card-header card-title">
+                                <p>@item.MatrattNamn</p>
+                            </div>
+                            <div class="card-body card-text">
+                                <p>@item.MatrattTyp</p>
+                                <p>@item.Pris</p>
+                                @{
+                                    string produktList = "";
+                                    foreach (var pro in item.MatrattProdukts)
+                                    {
+                                        produktList += pro.Produkt.ProduktNamn + ",";
+                                    }
+                                }
+                                <p>@produktList.Remove(produktList.LastIndexOf(','))</p>
+                            </div>
+                            <div class="card-footer form-inline">
+                                @if (!Model.ShowAdminControlls)
+                                {
+                                    <form asp-action="AddToCart" 
+                                                asp-controller="Home" >
+                                        <input class="form-control" type="number" min="1" max="10"
+                                               asp-for="BestallningMatratt.Antal" value="1" />
+
+                                        <input type="hidden" asp-for="BestallningMatratt.MatrattId"
+                                               value="@item.MatrattId" />
+
+                                        <button
+                                                type="submit" 
+                                                class="btn btn-primary"
+                                                data-ajax="true"
+                                                data-ajax-url="/HomeController/CartPartial"
+                                                data-ajax-update="#cartList" 
+                    	                        data-ajax-mode="replace" >
+                                            Lägg till i varukorgen
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ol>
+        </div>
+        <div id="cartList"></div>
+    </div>

@@ -1,0 +1,11 @@
+﻿@model NewMatrattTyp
+
+<div class="form-inline">
+    <form asp-action="NewProduct" asp-controller="admin">
+        <section class="form-group">
+            <label asp-for="Beskrivning" class="col-form-label"></label>
+            <input asp-for="Beskrivning" class="form-control" />
+        </section>
+        <input type="submit" class="btn btn-primary" />
+    </form>
+</div>

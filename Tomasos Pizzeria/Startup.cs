@@ -27,6 +27,11 @@ namespace Tomasos_Pizzeria
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
+            });
+
             services.AddMvc(options => options.EnableEndpointRouting = false);
             
             services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(
@@ -52,7 +57,7 @@ namespace Tomasos_Pizzeria
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
 
