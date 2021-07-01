@@ -33,8 +33,9 @@
                             <div class="card-footer form-inline">
                                 @if (!Model.ShowAdminControlls)
                                 {
-                                    <form asp-action="AddToCart" 
-                                                asp-controller="Home" >
+                                    <form method="post" data-ajax="true" data-ajax-method="post" 
+                                          data-ajax-url="/Home/AddToCart" data-ajax-update="#cartList"
+>
                                         <input class="form-control" type="number" min="1" max="10"
                                                asp-for="BestallningMatratt.Antal" value="1" />
 
@@ -43,11 +44,7 @@
 
                                         <button
                                                 type="submit" 
-                                                class="btn btn-primary"
-                                                data-ajax="true"
-                                                data-ajax-url="/HomeController/CartPartial"
-                                                data-ajax-update="#cartList" 
-                    	                        data-ajax-mode="replace" >
+                                                class="btn btn-primary">
                                             Lägg till i varukorgen
                                         </button>
                                     </form>
@@ -58,5 +55,16 @@
                 }
             </ol>
         </div>
-        <div id="cartList"></div>
+        <div id="cartList">
+        </div>
     </div>
+    
+@section Scripts{
+    <script>
+        updatePreview = (xhr) => {
+            alert("response: " , xhr)
+
+            $('#cartlist').load('/Home/CartPartial')
+        }
+    </script>
+}

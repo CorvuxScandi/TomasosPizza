@@ -58,7 +58,7 @@ namespace Tomasos_Pizzeria.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public void AddToCart(MenuItemModel model)
+        public IActionResult AddToCart(MenuItemModel model)
         {
 
             var bm = model.BestallningMatratt;            
@@ -83,10 +83,11 @@ namespace Tomasos_Pizzeria.Controllers
             cart.Add(bm);
             
             HttpContext.Session.SetString("cart", JsonConvert.SerializeObject(cart));
-            
 
+            return RedirectToAction("CartPartial");
         }
-        public PartialViewResult CartPartial()
+
+        public IActionResult CartPartial()
         {
             string jsonObject = HttpContext.Session.GetString("cart");
 
@@ -100,7 +101,7 @@ namespace Tomasos_Pizzeria.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public PartialViewResult EditCart(ShoppingCartViewModel model)
+        public IActionResult EditCart(ShoppingCartViewModel model)
         {
             foreach (var item in model.Cart)
             {
@@ -110,8 +111,7 @@ namespace Tomasos_Pizzeria.Controllers
 
             return PartialView("_ShoppingCartPartial", model );
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+
         public IActionResult Checkout()
         {
             List<BestallningMatratt> cart;
