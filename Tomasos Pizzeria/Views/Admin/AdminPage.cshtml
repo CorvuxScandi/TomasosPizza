@@ -1,7 +1,13 @@
-﻿@page
-@model AdminViewModel
-<partial name="_NewMenuItemPartial" model="Model" />
+﻿@model AdminViewModel
 
-<partial name="_NewProductPartial" model="Model.Produkt"/>
+<div class="container">
 
-<partial name="_NewTypePartial" model="Model.Typ"/>
+    <div class="row">
+        <div class="col">
+            @(await Component.InvokeAsync("Menu"))
+        </div>
+        <div class="col"><partial name="_NewMenuItemPartial" model="Model" /></div>
+        <div class="col"><partial name="_NewProductPartial" model="Model.NewProduct" /></div>
+        <div class="col"><partial name="_NewTypePartial" model="Model.NewTyp" /></div>
+    </div>
+</div>

@@ -1,22 +1,24 @@
-﻿
-@model Tomasos_Pizzeria.Identity.IdentityModels.LoginModel
+﻿@model Tomasos_Pizzeria.Identity.IdentityModels.LoginModel
+
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <p>Logga in</p>
+            <h4>Logga in</h4>
         </div>
 
         <div class="card-body p-4">
-                <form asp-action="Login">
-                    <section class="form-group">
-                        <label asp-for="UserName" class="col-form-label text-dark"></label>
-                        <input asp-for="UserName" class="form-control" />
-                    </section>
-                    <section class="form-group">
-                        <label asp-for="Password" class="col-form-label text-dark"></label>
-                        <input asp-for="Password" class="form-control" />
-                    </section>
-                </form>
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            <form asp-action="Login">
+                <section class="form-group">
+                    <label asp-for="UserName" class="col-form-label text-dark"></label>
+                    <input asp-for="UserName" class="form-control" />
+                </section>
+                <section class="form-group">
+                    <label asp-for="Password" class="col-form-label text-dark"></label>
+                    <input asp-for="Password" class="form-control" />
+                </section>
+                <input type="submit" class="btn btn-primary" value="Logga in" />
+            </form>
         </div>
     </div>
 </div>

@@ -12,6 +12,5 @@ namespace Tomasos_Pizzeria.Models
         public List<MatrattTyp> Typs { get; set; }
         public List<Produkt> Produkts { get; set; }
         public BestallningMatratt BestallningMatratt { get; set; }
-        public bool ShowAdminControlls { get; set; }
     }
 }

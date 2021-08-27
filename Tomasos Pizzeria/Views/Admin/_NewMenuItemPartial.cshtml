@@ -1,7 +1,28 @@
 ﻿@model AdminViewModel
 
-<div class="form-inline">
+@{
 
+    List<SelectListItem> Produker()
+    {
+        List<SelectListItem> listItems = new();
+
+        foreach (var item in Model.Produkter)
+        {
+            listItems.Add(new()
+            {
+                Text = item.ProduktNamn,
+                Value = item.ProduktId.ToString(),
+                Selected = false
+            });
+
+        }
+        return listItems;
+    }
+
+}
+
+<div class="form-inline">
+    <h5>Ny maträtt</h5>
     <form asp-action="NewMenuItem" asp-controller="Admin">
 
         <div class="form-group">
@@ -14,20 +35,14 @@
             <input asp-for="NewMatratt.Beskrivning" class="form-control" />
         </div>
 
-        <div class="form-group">
-            <label class="col-form-label">Ingredienser</label>
-                @foreach (var item in Model.ExcistingProdukter)
-                {
-                    <section class="form-check">
-                        <input asp-for="NewMatratt.ProduktList" type="checkbox" value="@item.ProduktId" class="form-check-input" />
-                        <label asp-for="@item.ProduktId" class="form-check-label">@item.ProduktNamn</label>
-                    </section>
-                }
+        <div class="">
+            <p class="">Ingredienser</p>
+            <select asp-for="@Model.NewMatratt.ProduktList" asp-items="@Produker()"></select>
         </div>
 
         <div class="form-group">
             <label asp-for="NewMatratt.MatrattTyp" class="col-form-label">Maträttstyp</label>
-            <select asp-for="NewMatratt.MatrattTyp" class="form-control" >
+            <select asp-for="NewMatratt.MatrattTyp" class="form-control">
                 <option selected>--Välj maträttstyp--</option>
                 @foreach (var item in Model.Typer)
                 {
@@ -35,7 +50,6 @@
                 }
             </select>
         </div>
-        <input type="submit" class="btn btn-primary" value="Skapa ny maträtt"/>
+        <input type="submit" class="btn btn-primary" value="Skapa ny maträtt" />
     </form>
-
 </div>

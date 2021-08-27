@@ -1,0 +1,71 @@
+﻿@model MenuItemModel
+
+<div>
+    <ol class="">
+        @foreach (var item in Model.Matratts)
+        {
+            <li class="">
+                <div class="card">
+                    <div class="card-header card-title">
+                        <p>@item.MatrattNamn</p>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row d-flex justify-content-between mb-2">
+                            <div>
+                                <p class="card-text col">@item.MatrattTypNavigation.Beskrivning</p>
+                            </div>
+                            <div>
+                                <p class="card-text col">@item.Pris Kr</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <p class="card-text">@item.Beskrivning</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            @{
+                                string produktList = "";
+                                foreach (var pro in item.MatrattProdukts)
+                                {
+                                    produktList += pro.Produkt.ProduktNamn + ", ";
+                                }
+                            }
+                            <div class="col-12">
+                                <p class="card-text">@produktList.Remove(produktList.LastIndexOf(", "))</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        @if (User.IsInRole(ApplicationRoles.Customer))
+                        {
+                            <form class="form-inline" method="post" asp-action="AddToCart" asp-controller="Home">
+                                <input class="form-control" type="number" min="1" max="10"
+                                       asp-for="BestallningMatratt.Antal" value="1" />
+
+                                <input type="hidden" asp-for="BestallningMatratt.MatrattId"
+                                       value="@item.MatrattId" />
+
+                                <button type="submit"
+                                        class="btn btn-primary">
+                                    Lägg till i varukorgen
+                                </button>
+                            </form>
+                        }
+
+                        @if (User.IsInRole(ApplicationRoles.Admin))
+                        {
+                            <a class="" asp-controller="Admin" asp-action="DeleteMatratt" asp-route-id="@item.MatrattId">Ta bort maträtt</a>
+                        }
+                    </div>
+                </div>
+
+                @*data-ajax="true" data-ajax-method="post"
+                    data-ajax-url="/Home/AddToCart" data-ajax-update="#cartList"*@
+            </li>
+        }
+    </ol>
+</div>

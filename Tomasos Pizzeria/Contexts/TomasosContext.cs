@@ -30,7 +30,7 @@ namespace Tomasos_Pizzeria.Contexts
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("server=localhost;Database=Tomasos;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("server=MONOLITH\\RAVENSERVER;Database=Tomasos;Trusted_Connection=True;");
             }
         }
 

@@ -1,11 +1,12 @@
 ﻿@model NewProduct
 
 <div class="form-inline">
+    <h5>Ny produkt</h5>
     <form asp-action="NewProduct" asp-controller="admin">
         <section class="form-group">
             <label asp-for="ProduktNamn" class="col-form-label"></label>
             <input asp-for="ProduktNamn" class="form-control" />
         </section>
         <input type="submit" class="btn btn-primary" />
-     </form>
+    </form>
 </div>

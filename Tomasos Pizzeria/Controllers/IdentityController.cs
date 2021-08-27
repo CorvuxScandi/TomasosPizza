@@ -23,18 +23,18 @@ namespace Tomasos_Pizzeria.Controllers
             _signInManager = signInManager;
         }
 
-
         // Go to Loginin view
         [HttpGet]
         public ActionResult Register()
         {
-            return View();
+            RegisterUserModel model = new();
+            return View(model);
         }
 
         // Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async  Task<ActionResult> Register(RegisterUserModel userModel)
+        public async Task<ActionResult> Register(RegisterUserModel userModel)
         {
             if (ModelState.IsValid)
             {
@@ -60,10 +60,10 @@ namespace Tomasos_Pizzeria.Controllers
                 var result = await _userManager.CreateAsync(newUser, userModel.Password);
                 if (result.Succeeded)
                 {
+                    _context.SaveChanges();
                     await _userManager.AddToRoleAsync(newUser, ApplicationRoles.Customer);
                     return RedirectToAction("Index", "Home");
                 }
-
             }
             return View(userModel);
         }
@@ -81,13 +81,17 @@ namespace Tomasos_Pizzeria.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByNameAsync(login.UserName);
-                if(user != null)
+                if (user != null)
                 {
                     var result = await _signInManager.CheckPasswordSignInAsync(user, login.Password, false);
-                    if(result.Succeeded) return RedirectToAction("Shop", "Home");
+                    if (result.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(user, false);
+                        return RedirectToAction("Store", "Home");
+                    }
                 }
             }
-            ModelState.AddModelError("", "Ogiltligt användarnamn eller lösenord");
+            ModelState.AddModelError("password", "Ogiltligt användarnamn eller lösenord");
             return View();
         }
 
@@ -96,6 +100,66 @@ namespace Tomasos_Pizzeria.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult EditProfile()
+        {
+            foreach (var kund in _context.Kunds)
+            {
+                if (kund.AnvandarNamn == User.Identity.Name)
+                {
+                    string fname = kund.Namn.Substring(0, kund.Namn.IndexOf(" "));
+                    string lname = kund.Namn[kund.Namn.LastIndexOf(' ')..];
+                    RegisterUserModel userModel = new()
+                    {
+                        Bestallnings = kund.Bestallnings,
+                        KundId = kund.KundId,
+                        Adress = kund.Gatuadress,
+                        City = kund.Postort,
+                        Email = kund.Email,
+                        FirstName = fname,
+                        LastName = lname,
+                        Password = kund.Losenord,
+                        Phone = kund.Telefon,
+                        UserName = kund.AnvandarNamn,
+                        ZipCode = kund.Postnr
+                    };
+
+                    return View("Register", userModel);
+                }
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult EditProfile(RegisterUserModel kund)
+        {
+            Kund edited = new()
+            {
+                AnvandarNamn = kund.UserName,
+                Namn = kund.FirstName + " " + kund.LastName,
+                Bestallnings = kund.Bestallnings,
+                Email = kund.Email,
+                Gatuadress = kund.Adress,
+                KundId = kund.KundId,
+                Losenord = kund.Password,
+                Postnr = kund.ZipCode,
+                Postort = kund.City,
+                Telefon = kund.Phone
+            };
+
+            _context.Kunds.Update(edited);
+            var result = _context.SaveChanges();
+
+            if (result < 1)
+            {
+                ViewBag.Message = "Serverfel försök igen";
+                return View("Register", kund);
+            }
 
             return RedirectToAction("Index", "Home");
         }

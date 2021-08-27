@@ -1,68 +1,20 @@
-﻿
-@model MenuItemModel
+﻿@model MenuItemModel
 
-
-    <div class="container">
-        <div class="border border-dark">
-            @if (Model.ShowAdminControlls)
-            {
-                <div>
-                    <a class="btn btn-dark" asp-controller="Admin" asp-action="NewMatratt">Lägg till ny maträtt</a>
-                </div>
-            }
-            <ol>
-                @foreach (var item in Model.Matratts)
-                {
-                    <li>
-                        <div class="card">
-                            <div class="card-header card-title">
-                                <p>@item.MatrattNamn</p>
-                            </div>
-                            <div class="card-body card-text">
-                                <p>@item.MatrattTyp</p>
-                                <p>@item.Pris</p>
-                                @{
-                                    string produktList = "";
-                                    foreach (var pro in item.MatrattProdukts)
-                                    {
-                                        produktList += pro.Produkt.ProduktNamn + ",";
-                                    }
-                                }
-                                <p>@produktList.Remove(produktList.LastIndexOf(','))</p>
-                            </div>
-                            <div class="card-footer form-inline">
-                                @if (!Model.ShowAdminControlls)
-                                {
-                                    <form method="post" data-ajax="true" data-ajax-method="post" 
-                                          data-ajax-url="/Home/AddToCart" data-ajax-update="#cartList"
->
-                                        <input class="form-control" type="number" min="1" max="10"
-                                               asp-for="BestallningMatratt.Antal" value="1" />
-
-                                        <input type="hidden" asp-for="BestallningMatratt.MatrattId"
-                                               value="@item.MatrattId" />
-
-                                        <button
-                                                type="submit" 
-                                                class="btn btn-primary">
-                                            Lägg till i varukorgen
-                                        </button>
-                                    </form>
-                                }
-                            </div>
-                        </div>
-                    </li>
-                }
-            </ol>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col border border-info">
+            @(await Component.InvokeAsync("Menu"))
         </div>
-        <div id="cartList">
+        <div class="col" id="cartList">
+            @(await Component.InvokeAsync("Cart"))
         </div>
     </div>
-    
+</div>
+
 @section Scripts{
     <script>
         updatePreview = (xhr) => {
-            alert("response: " , xhr)
+            alert("response: ", xhr)
 
             $('#cartlist').load('/Home/CartPartial')
         }

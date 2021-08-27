@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tomasos_Pizzeria.Contexts;
+using Tomasos_Pizzeria.Identity;
 using Tomasos_Pizzeria.Identity.Identitycontext;
 using Tomasos_Pizzeria.Identity.IdentityModels;
 
@@ -28,12 +29,13 @@ namespace Tomasos_Pizzeria
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDistributedMemoryCache();
-            services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time
             });
 
             services.AddMvc(options => options.EnableEndpointRouting = false);
-            
+
             services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("Identity")));
 
@@ -46,7 +48,7 @@ namespace Tomasos_Pizzeria
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<ApplicationUser> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -61,12 +63,14 @@ namespace Tomasos_Pizzeria
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseMvc(routes => 
-            { routes.MapRoute(
-                name: "default", 
-                template: "{controller=Home}/{action=Index}/{id?}"); 
-            });
+            IdentityInitializer.SeedData(userManager);
 
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                  name: "default",
+                  template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

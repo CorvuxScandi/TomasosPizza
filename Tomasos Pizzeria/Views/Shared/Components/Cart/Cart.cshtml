@@ -1,0 +1,31 @@
+﻿@model ShoppingCartViewModel
+@{
+    int totalSum = 0;
+}
+
+<div>
+    <ul class="list-group list-group-flush">
+        @foreach (var item in Model.Cart)
+        {
+            var mat = Model.Matratts.First(m => m.MatrattId == item.MatrattId);
+            string name = mat.MatrattNamn;
+            int price = mat.Pris * item.Antal;
+            totalSum += price;
+        <li class="list-group-item">
+            <p>@name</p>
+            <p>Antal: @item.Antal</p>
+            <section>
+                <form class="form-inline" method="post" asp-action="EditCart" asp-controller="Home">
+                    <input asp-for="BM.Antal" value="@item.Antal" class="form-control" type="number" min="0" max="10" />
+                    <input asp-for="BM.MatrattId" type="hidden" value="@item.MatrattId" />
+                    <button type="submit" class="btn btn-primary">Ändra</button>
+                </form>
+            </section>
+
+            <p>Pris: @price</p>
+        </li>
+        }
+    </ul>
+    <p>Total: @totalSum</p>
+    <a asp-action="Checkout" asp-controller="Home">Betsäll order</a>
+</div>

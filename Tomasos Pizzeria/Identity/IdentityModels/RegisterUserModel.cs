@@ -3,29 +3,40 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Tomasos_Pizzeria.Models;
 
 namespace Tomasos_Pizzeria.Identity.IdentityModels
 {
-    public class RegisterUserModel
+    public class RegisterUserModel : LoginModel
     {
-        [Required(ErrorMessage = "You need a user name")]
-        public string UserName { get; set; }
+        public RegisterUserModel()
+        {
+            Bestallnings = new HashSet<Bestallning>();
+        }
+
+        public int KundId { get; set; }
+
+        [Required, Display(Name = "E-Mail"), DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        [Required]
+
+        [Required, Display(Name = "Förnamn")]
         public string FirstName { get; set; }
-        [Required]
+
+        [Required, Display(Name = "Efternamn")]
         public string LastName { get; set; }
-        [Required(ErrorMessage = "You need a password")]
-        public string Password { get; set; }
-        [Required]
+
+        [Required, Display(Name = "Gatuadress")]
         public string Adress { get; set; }
-        [Required]
+
+        [Required, Display(Name = "Postkod"), DataType(DataType.PostalCode)]
         public string ZipCode { get; set; }
-        [Required]
+
+        [Required, Display(Name = "Postort")]
         public string City { get; set; }
+
+        [Required, Display(Name = "Telefonnummer"), DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
 
-
-
+        public virtual ICollection<Bestallning> Bestallnings { get; set; }
     }
 }

@@ -11,7 +11,7 @@ using Tomasos_Pizzeria.Models.ViewModels;
 
 namespace Tomasos_Pizzeria.Controllers
 {
-   // [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
         private TomasosContext _context;
@@ -26,7 +26,7 @@ namespace Tomasos_Pizzeria.Controllers
         {
             AdminViewModel model = new()
             {
-                ExcistingProdukter = _context.Produkts.ToList(),
+                Produkter = _context.Produkts.ToList(),
                 Typer = _context.MatrattTyps.ToList()
             };
             return View(model);
@@ -51,30 +51,32 @@ namespace Tomasos_Pizzeria.Controllers
             _context.SaveChanges();
             return View("AdminPage");
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditMenuItem(Matratt matratt)
+        public IActionResult c(int id)
         {
-            _context.Matratts.Update(matratt);
-            _context.SaveChanges();
-            return View("AdminPage");
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult NewProdukt(NewProduct mp)
-        {
-            _context.Produkts.Add(new() {ProduktNamn = mp.ProduktNamn });
-            _context.SaveChanges();
-            return View("AdminPage");
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult NewMatrattTyp(NewMatrattTyp mt)
-        {
-            _context.MatrattTyps.Add(new() {Beskrivning = mt.Beskrivning });
+            _context.Matratts.Remove(_context.Matratts.First(m => m.MatrattId == id));
             _context.SaveChanges();
             return View("AdminPage");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult NewProdukt(NewProduct mp)
+        {
+            _context.Produkts.Add(new() { ProduktNamn = mp.ProduktNamn });
+            _context.SaveChanges();
+            return View("AdminPage");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult NewMatrattTyp(NewMatrattTyp mt)
+        {
+            _context.MatrattTyps.Add(new() { Beskrivning = mt.Beskrivning });
+            _context.SaveChanges();
+            return View("AdminPage");
+        }
     }
 }

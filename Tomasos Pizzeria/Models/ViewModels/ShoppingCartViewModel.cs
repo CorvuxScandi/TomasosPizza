@@ -7,7 +7,8 @@ namespace Tomasos_Pizzeria.Models.ViewModels
 {
     public class ShoppingCartViewModel
     {
-       public List<Matratt> Matratts { get; set; }
+        public List<Matratt> Matratts { get; set; }
         public List<BestallningMatratt> Cart { get; set; }
+        public BestallningMatratt BM { get; set; }
     }
 }

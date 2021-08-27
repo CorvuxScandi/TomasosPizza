@@ -8,7 +8,6 @@ namespace Tomasos_Pizzeria.Identity.IdentityModels
     public static class ApplicationRoles
     {
         public static readonly string Admin = "admin";
-        public static readonly string Customer = "customer";
-
+        public static readonly string Customer = "user";
     }
 }
